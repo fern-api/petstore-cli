@@ -62,11 +62,11 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - rust-target: x86_64-unknown-linux-gnu
+          - rust-target: x86_64-unknown-linux-musl
             runner: ubuntu-latest
             npm-platform-suffix: linux-x64
-          - rust-target: aarch64-unknown-linux-gnu
-            runner: ubuntu-latest
+          - rust-target: aarch64-unknown-linux-musl
+            runner: ubuntu-24.04-arm
             npm-platform-suffix: linux-arm64
           - rust-target: x86_64-apple-darwin
             runner: macos-latest
@@ -91,15 +91,28 @@ jobs:
         with:
           registry-url: "https://registry.npmjs.org"
 
-      - name: Install cross-compilation tools
-        if: matrix.rust-target == 'aarch64-unknown-linux-gnu'
+      # Each Linux target builds natively on its own arch (no cross-compile):
+      # x86_64 on ubuntu-latest, aarch64 on ubuntu-24.04-arm. musl-tools
+      # provides the static-musl linker for the host arch.
+      - name: Install musl build tools
+        if: contains(matrix.rust-target, '-linux-musl')
         run: |
           sudo apt-get update
-          sudo apt-get install -y gcc-aarch64-linux-gnu
-          echo "CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_LINKER=aarch64-linux-gnu-gcc" >> $GITHUB_ENV
+          sudo apt-get install -y musl-tools
 
       - name: Build release binary
-        run: cargo build --release --locked --target ${{ matrix.rust-target }}
+        shell: bash
+        run: |
+          # Linux targets use static musl + rustls so the binary has no runtime
+          # dependency on system OpenSSL/glibc and runs on any distro. macOS and
+          # Windows keep the default native-tls backend (Secure Transport /
+          # SChannel), which don't link OpenSSL.
+          if [[ "${{ matrix.rust-target }}" == *-linux-musl ]]; then
+            cargo build --release --locked --target ${{ matrix.rust-target }} \
+              --no-default-features --features rustls
+          else
+            cargo build --release --locked --target ${{ matrix.rust-target }}
+          fi
 
       - name: Package and publish npm platform package
         shell: bash
