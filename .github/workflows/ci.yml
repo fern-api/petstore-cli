@@ -132,16 +132,19 @@ jobs:
           PKGJSON
 
           cd "${PKG_DIR}"
+          publish() {  # use latest npm to ensure OIDC support
+            npx -y npm@latest publish "$@"
+          }
           # Pre-release detection — require the semver "-" separator so a
           # release tag like v1.0.0 for a package whose version string
           # happens to contain "alpha"/"beta" as a substring isn't
           # mis-tagged on npm.
           if [[ "${VERSION}" == *-alpha* ]]; then
-            npm publish --access public --tag alpha
+            publish --access public --tag alpha
           elif [[ "${VERSION}" == *-beta* ]]; then
-            npm publish --access public --tag beta
+            publish --access public --tag beta
           else
-            npm publish --access public
+            publish --access public
           fi
 
   publish-launcher:
@@ -232,14 +235,17 @@ jobs:
           LAUNCHER
 
           cd "${PKG_DIR}"
+          publish() {  # use latest npm to ensure OIDC support
+            npx -y npm@latest publish "$@"
+          }
           # Pre-release detection — require the semver "-" separator so a
           # release tag like v1.0.0 for a package whose version string
           # happens to contain "alpha"/"beta" as a substring isn't
           # mis-tagged on npm.
           if [[ "${VERSION}" == *-alpha* ]]; then
-            npm publish --access public --tag alpha
+            publish --access public --tag alpha
           elif [[ "${VERSION}" == *-beta* ]]; then
-            npm publish --access public --tag beta
+            publish --access public --tag beta
           else
-            npm publish --access public
+            publish --access public
           fi
