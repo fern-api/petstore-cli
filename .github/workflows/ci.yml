@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Set up Rust
         uses: actions-rust-lang/setup-rust-toolchain@v1
@@ -26,7 +26,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Set up Rust
         uses: actions-rust-lang/setup-rust-toolchain@v1
@@ -38,7 +38,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Set up Rust
         uses: actions-rust-lang/setup-rust-toolchain@v1
@@ -79,7 +79,7 @@ jobs:
             npm-platform-suffix: win32-x64
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Set up Rust
         uses: actions-rust-lang/setup-rust-toolchain@v1
@@ -87,13 +87,10 @@ jobs:
           target: ${{ matrix.rust-target }}
 
       - name: Set up Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           registry-url: "https://registry.npmjs.org"
 
-      # Each Linux target builds natively on its own arch (no cross-compile):
-      # x86_64 on ubuntu-latest, aarch64 on ubuntu-24.04-arm. musl-tools
-      # provides the static-musl linker for the host arch.
       - name: Install musl build tools
         if: contains(matrix.rust-target, '-linux-musl')
         run: |
@@ -103,10 +100,6 @@ jobs:
       - name: Build release binary
         shell: bash
         run: |
-          # Linux targets use static musl + rustls so the binary has no runtime
-          # dependency on system OpenSSL/glibc and runs on any distro. macOS and
-          # Windows keep the default native-tls backend (Secure Transport /
-          # SChannel), which don't link OpenSSL.
           if [[ "${{ matrix.rust-target }}" == *-linux-musl ]]; then
             cargo build --release --locked --target ${{ matrix.rust-target }} \
               --no-default-features --features rustls
@@ -157,7 +150,15 @@ jobs:
           elif [[ "${VERSION}" == *-beta* ]]; then
             publish --access public --tag beta
           else
-            publish --access public
+            PKG_NAME=$(node -p "require('./package.json').name")
+            PKG_VERSION=$(node -p "require('./package.json').version")
+            CURRENT_LATEST=$(npm view "${PKG_NAME}" dist-tags.latest 2>/dev/null || echo "0.0.0")
+            if npx -y semver@7.8.1 "${PKG_VERSION}" -r "<${CURRENT_LATEST}" > /dev/null 2>&1; then
+              echo "Publishing ${PKG_VERSION} with --tag backport (current latest is ${CURRENT_LATEST})"
+              publish --access public --tag backport
+            else
+              publish --access public
+            fi
           fi
 
   publish-launcher:
@@ -169,10 +170,10 @@ jobs:
       id-token: write
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Set up Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           registry-url: "https://registry.npmjs.org"
 
@@ -260,5 +261,13 @@ jobs:
           elif [[ "${VERSION}" == *-beta* ]]; then
             publish --access public --tag beta
           else
-            publish --access public
+            PKG_NAME=$(node -p "require('./package.json').name")
+            PKG_VERSION=$(node -p "require('./package.json').version")
+            CURRENT_LATEST=$(npm view "${PKG_NAME}" dist-tags.latest 2>/dev/null || echo "0.0.0")
+            if npx -y semver@7.8.1 "${PKG_VERSION}" -r "<${CURRENT_LATEST}" > /dev/null 2>&1; then
+              echo "Publishing ${PKG_VERSION} with --tag backport (current latest is ${CURRENT_LATEST})"
+              publish --access public --tag backport
+            else
+              publish --access public
+            fi
           fi
