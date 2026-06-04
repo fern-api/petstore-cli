@@ -49,6 +49,9 @@ futures-util = "0.3"
 httpdate = "1"
 libc = "0.2"
 percent-encoding = "2.3.2"
+# Generated Rust SDK for the Petstore API, used by the SDK-backed custom
+# commands (cli/petstore-api/custom/commands_sdk.rs).
+petstore = { git = "https://github.com/fern-demo/petstore-rust-sdk", tag = "0.1.0" }
 reqwest = { version = "0.12", features = ["json", "multipart", "stream"], default-features = false }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"

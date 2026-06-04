@@ -359,6 +359,7 @@ dependencies = [
  "httpdate",
  "libc",
  "percent-encoding",
+ "petstore",
  "petstore_api_types",
  "reqwest",
  "secrecy",
@@ -1132,6 +1133,20 @@ name = "percent-encoding"
 version = "2.3.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9b4f627cb1b25917193a259e49bdad08f671f8d9708acfd5fe0a8c1455d87220"
+
+[[package]]
+name = "petstore"
+version = "0.0.0-fern-placeholder"
+source = "git+https://github.com/fern-demo/petstore-rust-sdk?tag=0.1.0#9e9a06c4da3fffa10ca27bb99636f0ad64eeb7ab"
+dependencies = [
+ "bytes",
+ "futures",
+ "reqwest",
+ "serde",
+ "serde_json",
+ "thiserror 1.0.69",
+ "tokio",
+]
 
 [[package]]
 name = "petstore_api_types"

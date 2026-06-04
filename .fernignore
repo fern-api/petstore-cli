@@ -2,6 +2,12 @@
 changelog.md
 
 # User-owned custom command handlers — composed into the CLI by the
-# generated main.rs via custom::register(app). Keep this listed so
+# generated main.rs via custom::register(app). Keep these listed so
 # `fern generate` never overwrites your commands.
 cli/petstore-api/custom.rs
+cli/petstore-api/custom/commands_native.rs
+cli/petstore-api/custom/commands_sdk.rs
+
+# Dependency manifest — hand-edited to add the `petstore` SDK git
+# dependency used by the SDK-backed custom commands.
+Cargo.toml
