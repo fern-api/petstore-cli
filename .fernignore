@@ -1,2 +1,7 @@
 # Specify files that shouldn't be modified by Fern
 changelog.md
+
+# User-owned custom command handlers — composed into the CLI by the
+# generated main.rs via custom::register(app). Keep this listed so
+# `fern generate` never overwrites your commands.
+cli/petstore-api/custom.rs
