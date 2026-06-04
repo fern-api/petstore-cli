@@ -1,6 +1,6 @@
 [package]
 name = "fern-cli-sdk"
-version = "0.0.0-fern-placeholder"
+version = "0.2.0"
 edition = "2021"
 description = "CLI generator — dynamic command surface from OpenAPI and GraphQL schemas"
 license = "Apache-2.0"
@@ -71,6 +71,9 @@ form_urlencoded = "1"
 dist = true
 
 # The profile that 'cargo dist' will build with
+[dependencies.petstore_api_types]
+path = "petstore-api-types"
+
 [profile.dist]
 inherits = "release"
 lto = "thin"
