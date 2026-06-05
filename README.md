@@ -27,7 +27,13 @@ cargo build --release
 
 ## Authentication
 
-This API requires authentication. Run `petstore-api --help` for details.
+Set the following environment variable(s) before using the CLI:
+
+```bash
+export PETSTORE_TOKEN="<your token>"
+```
+
+A `.env` file in the working directory is also supported — the CLI auto-loads it on startup.
 
 ## Usage
 
@@ -52,6 +58,7 @@ Options:
   -V, --version          Print version
 
 Environment variables:
+  PETSTORE_TOKEN                      Bearer token for authentication
   PETSTORE_API_BASE_URL               Override the API base URL
   PETSTORE_API_CA_BUNDLE              Path to PEM file with extra trust roots (or SSL_CERT_FILE)
   PETSTORE_API_INSECURE=1             Skip TLS verification (debugging only)
