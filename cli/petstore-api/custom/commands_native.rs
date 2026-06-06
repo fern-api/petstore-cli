@@ -10,9 +10,6 @@
 //! * `adopt`       — top-level; chains create + get.
 //! * `pets find`   — grafted under the generated `pets` group.
 //! * `pets count`  — also under `pets`.
-//!
-//! The SDK-backed twins of these commands live in
-//! [`super::commands_sdk`].
 
 use clap::{Arg, ArgMatches, Command};
 use fern_cli_sdk::app::CliApp;

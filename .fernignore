@@ -6,9 +6,5 @@ changelog.md
 # `fern generate` never overwrites your commands.
 cli/petstore-api/custom.rs
 cli/petstore-api/custom/commands_native.rs
-cli/petstore-api/custom/commands_sdk.rs
 cli/petstore-api/custom/commands_cogenerated.rs
-
-# Dependency manifest — hand-edited to add the `petstore` SDK git
-# dependency used by the SDK-backed custom commands.
-Cargo.toml
+cli/petstore-api/custom/commands_sdk.rs
