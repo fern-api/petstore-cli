@@ -1,3 +1,9 @@
+## 0.6.0 - 2026-06-06
+### Added
+* **`sdk_glue::sdk_client()`** — new helper that constructs a fully-wired SDK `ApiClient` from the CLI's `AppContext`, automatically inheriting auth, retries, TLS, and global headers.
+* **`sdk_glue::block_on()`** — new utility for invoking async SDK operations from synchronous custom-command handlers, bridging `ApiError` into `CliError` so `?` works naturally.
+* **`CliExecutorAdapter`** — new internal adapter implementing `petstore_api_sdk::RequestExecutor` that routes SDK HTTP requests through the CLI's existing executor stack.
+
 ## 0.3.0 - 2026-06-06
 ### Added
 * **`petstore-api-sdk`** — new Rust HTTP client crate exposing `ApiClient`, `PetsClient` (`list_pets`, `create_pet`, `get_pet`), and `AuthClient` (`get_token`) for the Petstore API.
