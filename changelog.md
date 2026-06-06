@@ -1,3 +1,11 @@
+## 0.3.0 - 2026-06-06
+### Added
+* **`petstore-api-sdk`** — new Rust HTTP client crate exposing `ApiClient`, `PetsClient` (`list_pets`, `create_pet`, `get_pet`), and `AuthClient` (`get_token`) for the Petstore API.
+* **`ApiClientBuilder` / `ClientConfig` / `HttpClient`** — new fluent builder, configuration struct, and internal HTTP client supporting JSON, streaming downloads via `ByteStream`, exponential-backoff retries, and automatic OAuth token management.
+* **`AsyncPaginator<T>` / `SyncPaginator<T>` / `PaginationResult<T>`** — new async and sync paginators (implementing `Stream` and `Iterator` respectively) for cursor-based and offset-based pagination, with per-page status codes, headers, and raw response bodies.
+* **`QueryBuilder` / `RequestOptions`** — new type-safe query-parameter builder and per-request options struct for overriding auth, retries, timeout, and headers on individual calls.
+* **`CliExecutor` / `SdkRequestExecutor` / `SdkError`** — new CLI transport bridge that routes SDK HTTP requests through the CLI's existing TLS, auth, and retry stack, with `block_on` for invoking async SDK operations from synchronous command context.
+
 ## 0.4.0 - 2026-06-05
 ### Added
 * **Object-shorthand input flags** — GraphQL commands now accept a `--<arg>` flag (e.g. `--filter '{"query":"x"}'`) as a shorthand for passing an entire input object as JSON, alongside existing per-field leaf flags.
