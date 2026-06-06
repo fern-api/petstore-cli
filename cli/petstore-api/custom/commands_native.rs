@@ -4,7 +4,7 @@
 //! `execute()` methods reuse the generated CLI's own HTTP executor —
 //! same auth, retries, base-URL resolution, and global headers as the
 //! built-in commands. Request/response models come from the
-//! `petstore_api_types` crate.
+//! `petstore_api_sdk` crate (via its prelude).
 //!
 //! Registered command surface:
 //! * `adopt`       — top-level; chains create + get.
@@ -16,7 +16,7 @@ use fern_cli_sdk::app::CliApp;
 use fern_cli_sdk::error::CliError;
 use fern_cli_sdk::formatter::{self, OutputFormat};
 use fern_cli_sdk::openapi::{AppContext, OpenApiBinding};
-use petstore_api_types::*;
+use petstore_api_sdk::prelude::*;
 
 /// Register the native-runtime command set on the CLI app builder.
 pub fn register(app: CliApp) -> CliApp {

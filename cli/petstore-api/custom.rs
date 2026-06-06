@@ -12,11 +12,13 @@
 //!   ([`AppContext::invoke`](fern_cli_sdk::openapi::AppContext)), reusing
 //!   the generated executor's auth, retries, and base-URL resolution.
 
+mod commands_cogenerated;
 mod commands_native;
 
 use fern_cli_sdk::app::CliApp;
 
 /// Register all custom commands on the CLI app builder.
 pub fn register(app: CliApp) -> CliApp {
-    commands_native::register(app)
+    let app = commands_native::register(app);
+    commands_cogenerated::register(app)
 }
