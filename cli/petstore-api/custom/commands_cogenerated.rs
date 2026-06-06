@@ -53,7 +53,7 @@ fn handle_adopt(matches: &ArgMatches, ctx: &AppContext) -> Result<(), CliError> 
     eprintln!("Created pet '{}' (id {})", created.name, created.id);
 
     let fetched: Pet = sdk_glue::block_on(client.pets.get_pet(&created.id, None))?;
-    println!("{}", serde_json::to_string_pretty(&fetched).unwrap());
+    println!("{}", serde_json::to_string_pretty(&fetched).map_err(|e| CliError::Other(e.into()))?);
     Ok(())
 }
 
@@ -89,7 +89,7 @@ fn handle_find(matches: &ArgMatches, ctx: &AppContext) -> Result<(), CliError> {
         .filter(|p| p.name.to_lowercase().contains(&query))
         .collect();
 
-    println!("{}", serde_json::to_string_pretty(&matched).unwrap());
+    println!("{}", serde_json::to_string_pretty(&matched).map_err(|e| CliError::Other(e.into()))?);
     Ok(())
 }
 
