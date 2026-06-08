@@ -1,3 +1,14 @@
+## 0.6.1 - 2026-06-08
+* chore: remove sdk_glue integration tests and petstore_api_types dev-dependency
+* The sdk_glue_verification integration test suite and its associated
+* `petstore_api_types` dev-dependency have been removed from the workspace.
+* These tests were tied to the petstore example schema and are no longer
+* needed as the SDK glue layer has stabilised.
+* Key changes:
+* Delete `tests/sdk_glue_verification.rs` (450-line integration test suite covering wiremock parity, auth inheritance, type identity, and regression scenarios)
+* Remove `petstore_api_types` path dependency from `[dev-dependencies]` in `Cargo.toml`
+* 🌿 Generated with Fern
+
 ## 0.6.0 - 2026-06-06
 ### Added
 * **`sdk_glue::sdk_client()`** — new helper that constructs a fully-wired SDK `ApiClient` from the CLI's `AppContext`, automatically inheriting auth, retries, TLS, and global headers.
