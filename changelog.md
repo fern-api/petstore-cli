@@ -1,3 +1,12 @@
+## 1.0.0 - 2026-06-08
+### Breaking Changes
+* **`SdkRequestExecutor::execute`** now returns `Result<Response, SdkError>` instead of `Result<Response, reqwest::Error>`. Update all trait implementations and call sites to handle `SdkError` in place of `reqwest::Error`.
+* **`CliExecutor` auth handling** is now fail-closed: if the auth provider returns an error, the request is aborted and `SdkError::Auth` is returned rather than silently sending without credentials. Code that relied on the previous fallback-without-auth behavior will now receive an error instead.
+### Added
+* **`SdkError::Auth`** — new variant surfacing credential-resolution and token-refresh failures, mapping to `CliError::Auth` on conversion.
+* **`CliApp::command_typed`** and **`CliApp::command_typed_with`** — register top-level custom commands with compile-time typed `clap::Args` structs, eliminating manual `ArgMatches` parsing.
+* **`CliApp::command_under_typed`** and **`CliApp::command_under_typed_with`** — same typed registration for commands nested under an existing command path.
+
 ## 0.6.1 - 2026-06-08
 * chore: remove sdk_glue integration tests and petstore_api_types dev-dependency
 * The sdk_glue_verification integration test suite and its associated
