@@ -180,6 +180,24 @@ impl GraphqlBinding {
             f(matches, ctx)
         })
     }
+
+    /// Wrap a typed handler into a closure suitable for
+    /// [`CliApp::command_typed()`](crate::app::CliApp::command_typed).
+    ///
+    /// The handler receives a parsed `A` (a `#[derive(clap::Args)]`
+    /// struct) and the binding's [`AppContext`](super::AppContext).
+    pub fn typed_handler<A: clap::Args>(
+        f: fn(A, &super::AppContext) -> Result<(), crate::error::CliError>,
+    ) -> impl Fn(A, &dyn std::any::Any) -> Result<(), crate::error::CliError> + Send + Sync {
+        move |args: A, ctx: &dyn std::any::Any| {
+            let ctx = ctx.downcast_ref::<super::AppContext>().ok_or_else(|| {
+                crate::error::CliError::Validation(
+                    "handler requires a GraphQL binding context".into(),
+                )
+            })?;
+            f(args, ctx)
+        }
+    }
 }
 
 impl Binding for GraphqlBinding {

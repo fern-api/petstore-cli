@@ -14,11 +14,13 @@
 
 mod commands_cogenerated;
 mod commands_native;
+mod commands_typed;
 
 use fern_cli_sdk::app::CliApp;
 
 /// Register all custom commands on the CLI app builder.
 pub fn register(app: CliApp) -> CliApp {
     let app = commands_native::register(app);
-    commands_cogenerated::register(app)
+    let app = commands_cogenerated::register(app);
+    commands_typed::register(app)
 }

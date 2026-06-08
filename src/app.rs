@@ -198,6 +198,62 @@ impl CliApp {
         self
     }
 
+    /// Register a top-level custom command with compile-time typed arguments.
+    ///
+    /// `A` is a [`clap::Args`] struct (typically `#[derive(clap::Args)]`)
+    /// whose fields become CLI flags. The handler receives the parsed `A`
+    /// instead of raw [`clap::ArgMatches`], so a mismatched arg name is a
+    /// compile error.
+    ///
+    /// ```rust,ignore
+    /// #[derive(clap::Args)]
+    /// struct AdoptArgs {
+    ///     #[arg(long)]
+    ///     name: String,
+    /// }
+    ///
+    /// fn handle_adopt(args: AdoptArgs, ctx: &AppContext) -> Result<(), CliError> {
+    ///     println!("adopting {}", args.name);
+    ///     Ok(())
+    /// }
+    ///
+    /// CliApp::new("my-cli")
+    ///     .binding(OpenApiBinding::new().spec(include_str!("openapi.yaml")))
+    ///     .command_typed(
+    ///         clap::Command::new("adopt").about("Adopt a pet"),
+    ///         OpenApiBinding::typed_handler(handle_adopt),
+    ///     )
+    ///     .run()
+    /// ```
+    ///
+    /// **Note:** `transform_response` and `recover_error` hooks do not
+    /// apply to custom commands. Custom command handlers manage their
+    /// own output directly.
+    ///
+    /// [`OpenApiBinding::typed_handler()`]: crate::openapi::OpenApiBinding::typed_handler
+    /// [`GraphqlBinding::typed_handler()`]: crate::graphql::GraphqlBinding::typed_handler
+    pub fn command_typed<A>(
+        mut self,
+        cmd: clap::Command,
+        handler: impl Fn(A, &dyn Any) -> Result<(), CliError> + Send + Sync + 'static,
+    ) -> Self
+    where
+        A: clap::Args,
+    {
+        let augmented = A::augment_args(cmd);
+        let erased: CliCommandHandler = Box::new(move |matches, ctx| {
+            let args = A::from_arg_matches(matches)
+                .map_err(|e| CliError::Validation(e.to_string()))?;
+            handler(args, ctx)
+        });
+        self.cli_commands.push(CliCommand {
+            path: Vec::new(),
+            cmd: augmented,
+            handler: erased,
+        });
+        self
+    }
+
     /// Register a custom command under an existing command path.
     ///
     /// ```rust,ignore
@@ -224,6 +280,50 @@ impl CliApp {
             path: path.iter().map(|s| s.to_string()).collect(),
             cmd,
             handler,
+        });
+        self
+    }
+
+    /// Register a typed custom command under an existing command path.
+    ///
+    /// Like [`command_typed`](Self::command_typed) but nests the command
+    /// under `path` in the command tree.
+    ///
+    /// ```rust,ignore
+    /// #[derive(clap::Args)]
+    /// struct VerifyArgs {
+    ///     #[arg(long)]
+    ///     secret: String,
+    /// }
+    ///
+    /// CliApp::new("my-cli")
+    ///     .binding(OpenApiBinding::new().spec(include_str!("openapi.yaml")))
+    ///     .command_under_typed(
+    ///         &["webhooks"],
+    ///         clap::Command::new("verify"),
+    ///         OpenApiBinding::typed_handler(handle_verify),
+    ///     )
+    ///     .run()
+    /// ```
+    pub fn command_under_typed<A>(
+        mut self,
+        path: &[&str],
+        cmd: clap::Command,
+        handler: impl Fn(A, &dyn Any) -> Result<(), CliError> + Send + Sync + 'static,
+    ) -> Self
+    where
+        A: clap::Args,
+    {
+        let augmented = A::augment_args(cmd);
+        let erased: CliCommandHandler = Box::new(move |matches, ctx| {
+            let args = A::from_arg_matches(matches)
+                .map_err(|e| CliError::Validation(e.to_string()))?;
+            handler(args, ctx)
+        });
+        self.cli_commands.push(CliCommand {
+            path: path.iter().map(|s| s.to_string()).collect(),
+            cmd: augmented,
+            handler: erased,
         });
         self
     }
