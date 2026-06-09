@@ -1,5 +1,7 @@
 # Petstore API CLI
 
+[![npm shield](https://img.shields.io/npm/v/@fern-api/example-cli-petstore)](https://www.npmjs.com/package/@fern-api/example-cli-petstore)
+
 Command-line interface for the Petstore API.
 
 ## Table of contents
