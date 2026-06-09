@@ -130,6 +130,10 @@ jobs:
             "name": "${PLATFORM_PKG}",
             "version": "${VERSION}",
             "description": "Platform-specific binary for petstore-api (${{ matrix.npm-platform-suffix }})",
+            "repository": {
+              "type": "git",
+              "url": "https://github.com/fern-api/petstore-cli"
+            },
             "os": ["$(echo ${{ matrix.npm-platform-suffix }} | cut -d- -f1)"],
             "cpu": ["$(echo ${{ matrix.npm-platform-suffix }} | cut -d- -f2)"],
             "main": "${BINARY_NAME}",
@@ -201,6 +205,10 @@ jobs:
             "name": "@fern-api/example-cli-petstore",
             "version": "${VERSION}",
             "description": "CLI for petstore-api",
+            "repository": {
+              "type": "git",
+              "url": "https://github.com/fern-api/petstore-cli"
+            },
             "bin": {
               "petstore-api": "bin/cli.js"
             },

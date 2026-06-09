@@ -1,3 +1,7 @@
+## 1.2.0 - 2026-06-09
+### Changed
+* **`HttpClient` empty-body handling** — empty response bodies on successful (2xx) responses are now deserialized from `null` instead of returning an `ApiError::Http` error; empty bodies on 4xx/5xx responses continue to surface as `ApiError::Http`.
+
 ## 1.1.0 - 2026-06-09
 ### Added
 * **`ApiError::Executor`** — new variant that captures errors from custom `RequestExecutor` implementations, preserving the original error as a boxed `std::error::Error` for downcasting.
