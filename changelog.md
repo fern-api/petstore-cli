@@ -1,3 +1,10 @@
+## 1.1.0 - 2026-06-09
+### Added
+* **`ApiError::Executor`** — new variant that captures errors from custom `RequestExecutor` implementations, preserving the original error as a boxed `std::error::Error` for downcasting.
+* **`std::fmt::Display` and `std::error::Error` for `SdkError`** — `SdkError` can now be boxed as `Box<dyn std::error::Error + Send + Sync>`, transmitted across the executor boundary, and downcast at the call site.
+### Changed
+* **`RequestExecutor::execute`** now returns `Result<Response, Box<dyn std::error::Error + Send + Sync>>` instead of `Result<Response, reqwest::Error>`. Custom executor implementations must update their return type; the built-in `ReqwestExecutor` and `CliExecutorAdapter` have been updated automatically.
+
 ## 1.0.0 - 2026-06-08
 ### Breaking Changes
 * **`SdkRequestExecutor::execute`** now returns `Result<Response, SdkError>` instead of `Result<Response, reqwest::Error>`. Update all trait implementations and call sites to handle `SdkError` in place of `reqwest::Error`.
